@@ -1,8 +1,8 @@
-$resourceGroup = "orleansintro"
+$resourceGroup = "orleansbasics"
 $location = "eastus"
-$storageAccount = "orleansintrostorage"
-$clusterName = "orleansintro"
-$containerRegistry = "orleansintroacr"
+$storageAccount = "orleansbasics1"
+$clusterName = "orleansbasics"
+$containerRegistry = "orleansbasicsacr"
 
 az login
 
