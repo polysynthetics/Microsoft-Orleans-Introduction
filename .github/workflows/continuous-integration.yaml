@@ -1,0 +1,50 @@
+name: Build - Continuous Integration
+
+on:
+  push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Checkouts the associated repository for this workflow
+    - uses: actions/checkout@v2
+    
+    # Ensures we have the proper dotnet SDK installed for downstream tasks
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v2.0.0
+      with:
+        # Optional SDK version(s) to use. If not provided, will install global.json version when available. Examples: 2.2.104, 3.1, 3.1.x
+        dotnet-version: 3.1.x
+
+    # dotnet restore pulls in any NuGet packages required by a solution
+    - name: Install dependencies
+      run: dotnet restore
+    
+    # Since this is the continuos integration (CI) step, we only need to build our application. We will 
+    # execute a similar step on the release pipeline, but instead of build, we will use publish
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    
+    # This command will execute a solution's unit tests and output the resulting logs to the the 
+    # specified results directory, "TestResults"
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal --logger trx --results-directory "TestResults"
+    
+    # While not required, it is always a good practice to publish artifacts veifying the state of this commit
+    - name: Upload dotnet test results
+      uses: actions/upload-artifact@v3
+      # The always() condition below will ensure that the test results are published even if there are test failures 
+      if: ${{ always() }}
+      with:
+        name: test-results
+        path: TestResults
+    
+    # Typically enterprise applications would have other steps in a continuous integration process.
+    # The idea is that we want to use CI as a first opportunity to "shift left" on any potential
+    # issues. Steps may include items such as:
+    # - security/vulnerability scans
+    # - code quality scans
+    # - add other stuff here... lol
+      
