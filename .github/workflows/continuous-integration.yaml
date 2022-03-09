@@ -2,9 +2,9 @@ name: Build - Continuous Integration
 
 on:
   pull_request:
-  - main
+    - main
   push:
-  - '!main'
+    - '!main'
 
 
 jobs:

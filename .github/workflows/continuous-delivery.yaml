@@ -1,21 +1,23 @@
 name: Deploy - Continous Delivery
 
+# The on code block below demonstrates that if branch protections are enabled, that 
+# the only time a continuous delivery (CD) workflow will execute is when a pull request
+# is merged into the main branch
+on: 
+  push:
+    - main
+
+# The 'env' block is used for declaring environment variables that will be used in our 
+# workflow. These variables can be recalled by using the expressions syntax '${{ <expression. }}'
+# For more information on expressions and retrieving environment variables and secrets, see
+# https://docs.github.com/en/actions/learn-github-actions/expressions
 env:
   AZURE_CONTAINER_REGISTRY: MY_REGISTRY_NAME # set this to the name of your container registry
   PROJECT_NAME: MY_PROJECT_NAME              # set this to your project's name
   RESOURCE_GROUP: MY_RESOURCE_GROUP          # set this to the resource group containing your AKS cluster
   CLUSTER_NAME: MY_CLUSTER_NAME              # set this to the name of your AKS cluster
   REGISTRY_URL: MY_REGISTRY_URL              # set this to the URL of your registry
-  # If you bake using helm:
-  CHART_PATH: MY_HELM_FILE                   # set this to the path to your helm file
-  CHART_OVERRIDE_PATH: MY_OVERRIDE_FILES     # set this to an array of override file paths
-
-# The on statement below demonstrates that if branch protections are enabled, that 
-# the only time a continuous delivery (CD) workflow will execute is when a pull request
-# is merged into the main branch
-on: 
-  push:
-  - main
+  MANIFEST_PATH: MY_HELM_FILE                   # set this to the path to your helm file
 
 jobs:
   build:

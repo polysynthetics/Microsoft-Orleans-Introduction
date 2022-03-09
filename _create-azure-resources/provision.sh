@@ -1,3 +1,9 @@
+# Instructions
+# The azure command line tool, az cli does not have great blocking for processes
+# In order to make sure things happen in the correct order, we recommend executing 
+# each command separately.
+
+# Set your resource name variables here. The following are for example purposes
 resourceGroup="orleansbasics"
 location="eastus"
 storageAccount="orleansbasics1"
