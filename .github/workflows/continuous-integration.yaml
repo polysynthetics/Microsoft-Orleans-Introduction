@@ -2,10 +2,11 @@ name: Build - Continuous Integration
 
 on:
   pull_request:
-    - main
+    branches:
+      - 'master'
   push:
-    - '!main'
-
+    branches:
+      - '!master'
 
 jobs:
   build:

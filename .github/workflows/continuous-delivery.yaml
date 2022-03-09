@@ -5,7 +5,8 @@ name: Deploy - Continous Delivery
 # is merged into the main branch
 on: 
   push:
-    - main
+    branches:
+      - 'master'
 
 # The 'env' block is used for declaring environment variables that will be used in our 
 # workflow. These variables can be recalled by using the expressions syntax '${{ <expression. }}'
