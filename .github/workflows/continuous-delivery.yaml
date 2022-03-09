@@ -1,0 +1,69 @@
+name: Deploy - Continous Delivery
+
+env:
+  AZURE_CONTAINER_REGISTRY: MY_REGISTRY_NAME # set this to the name of your container registry
+  PROJECT_NAME: MY_PROJECT_NAME              # set this to your project's name
+  RESOURCE_GROUP: MY_RESOURCE_GROUP          # set this to the resource group containing your AKS cluster
+  CLUSTER_NAME: MY_CLUSTER_NAME              # set this to the name of your AKS cluster
+  REGISTRY_URL: MY_REGISTRY_URL              # set this to the URL of your registry
+  # If you bake using helm:
+  CHART_PATH: MY_HELM_FILE                   # set this to the path to your helm file
+  CHART_OVERRIDE_PATH: MY_OVERRIDE_FILES     # set this to an array of override file paths
+
+# The on statement below demonstrates that if branch protections are enabled, that 
+# the only time a continuous delivery (CD) workflow will execute is when a pull request
+# is merged into the main branch
+on: 
+  push:
+  - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Build image on ACR
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
+          # Sets default azure container registry using environment variable above
+          az configure --defaults acr=${{ env.AZURE_CONTAINER_REGISTRY }}
+          
+          az acr build -t ${{ env.REGISTRY_URL }}/${{ env.PROJECT_NAME }}:${{ github.sha }}
+    
+    - name: Gets K8s context
+      uses: azure/aks-set-context@4e5aec273183a197b181314721843e047123d9fa
+      with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          resource-group: ${{ env.RESOURCE_GROUP }}
+          cluster-name: ${{ env.CLUSTER_NAME }}
+      id: login
+
+    # - name: Configure deployment
+    #   uses: azure/k8s-bake@773b6144a3732e3bf4c78b146a0bb9617b2e016b
+    #   with:
+    #     renderEngine: 'helm'
+    #     helmChart: ${{ env.CHART_PATH }}
+    #     overrideFiles: ${{ env.CHART_OVERRIDE_PATH }}
+    #     overrides: |     
+    #       replicas:2
+    #     helm-version: 'latest' 
+    #   id: bake
+
+    # - name: Deploys application
+    # - uses: Azure/k8s-deploy@c8fbd76ededaad2799c054a9fd5d0fa5d4e9aee4
+    #   with:
+    #     manifests: ${{ steps.bake.outputs.manifestsBundle }}
+    #     images: |
+    #       ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.PROJECT_NAME }}:${{ github.sha }}
+    #     imagepullsecrets: |
+    #       ${{ env.PROJECT_NAME }}

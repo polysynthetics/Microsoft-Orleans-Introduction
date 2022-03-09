@@ -1,7 +1,11 @@
 name: Build - Continuous Integration
 
 on:
-  push
+  pull_request:
+  - main
+  push:
+  - '!main'
+
 
 jobs:
   build:
