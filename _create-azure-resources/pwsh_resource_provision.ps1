@@ -1,9 +1,19 @@
+# Powershell script - no shebang needed ;)
+
+# Instructions
+# The azure command line tool, az cli does not have great blocking for processes
+# In order to make sure things happen in the correct order, we recommend executing 
+# each command separately in your IDE. In VS Code, you can highlight code and use 
+# F8 to execute the highlighted code 
+
+# Set your resource name variables here. The following are for example purposes
 $resourceGroup = "orleansbasics"
 $location = "eastus"
 $storageAccount = "orleansbasics1"
 $clusterName = "orleansbasics"
 $containerRegistry = "orleansbasicsacr"
 
+# Opens a browser tab to log in to Azure
 az login
 
 # Create a resource group

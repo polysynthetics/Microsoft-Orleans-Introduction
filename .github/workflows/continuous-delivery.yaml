@@ -23,12 +23,12 @@ on:
 # For more information on expressions and retrieving environment variables and secrets, see
 # https://docs.github.com/en/actions/learn-github-actions/expressions
 env:
-  AZURE_CONTAINER_REGISTRY: MY_REGISTRY_NAME # set this to the name of your container registry
-  PROJECT_NAME: MY_PROJECT_NAME              # set this to your project's name
-  RESOURCE_GROUP: MY_RESOURCE_GROUP          # set this to the resource group containing your AKS cluster
-  CLUSTER_NAME: MY_CLUSTER_NAME              # set this to the name of your AKS cluster
-  REGISTRY_URL: MY_REGISTRY_URL              # set this to the URL of your registry
-  MANIFEST_PATH: MY_HELM_FILE                   # set this to the path to your helm file
+  AZURE_CONTAINER_REGISTRY: orleansbasicsacr     # set this to the name of your container registry
+  PROJECT_NAME: orleansbasics                  # set this to your project's name
+  RESOURCE_GROUP: orleansbasics                  # set this to the resource group containing your AKS cluster
+  CLUSTER_NAME: orleansbasics                    # set this to the name of your AKS cluster
+  REGISTRY_URL: http://$acrServicePrincipalName
+  MANIFEST_PATH: _manifests/deployment.yaml      # set this to the path to your helm file
 
 jobs:
   build:
@@ -70,4 +70,4 @@ jobs:
         images: |
           ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.PROJECT_NAME }}:${{ github.sha }}
         imagepullsecrets: |
-          ${{ env.PROJECT_NAME }}
+          ${{ env.AZURE_CONTAINER_REGISTRY }}
