@@ -1,3 +1,13 @@
+#############################################################################################
+# These workflows are for demonstrations purposes only and should not be used in production #
+#############################################################################################
+# To learn more about GitHub Actions, please see the official documentation:                #
+# - https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions    #
+#                                                                                           #
+# To learn more about the actions used, please refer to the GitHub marketplace:             #
+# - https://github.com/marketplace                                                          #
+#############################################################################################
+
 name: Build - Continuous Integration
 
 on:
@@ -35,7 +45,7 @@ jobs:
     # This command will execute a solution's unit tests and output the resulting logs to the the 
     # specified results directory, "TestResults"
     - name: Test
-      run: dotnet test --no-restore --verbosity normal --logger trx --results-directory "TestResults"
+      run: dotnet test --no-restore --verbosity normal --logger xunit --results-directory "TestResults"
     
     # While not required, it is always a good practice to publish artifacts veifying the state of this commit
     - name: Upload dotnet test results
