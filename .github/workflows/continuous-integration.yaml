@@ -49,7 +49,7 @@ jobs:
     # This command will execute a solution's unit tests and output the resulting logs to the the 
     # specified results directory, "TestResults"
     - name: Test
-      run: dotnet test --no-restore --verbosity normal --logger xunit --results-directory "TestResults"
+      run: dotnet test --no-restore --verbosity normal --logger trx --results-directory "TestResults"
     
     # While not required, it is always a good practice to publish artifacts veifying the state of this commit
     - name: Upload dotnet test results
