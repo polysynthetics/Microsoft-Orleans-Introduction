@@ -1,5 +1,18 @@
+#############################################################################################
+# These workflows are for demonstrations purposes only and should not be used in production #
+#############################################################################################
+# To learn more about GitHub Actions, please see the official documentation:                #
+# - https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions    #
+#                                                                                           #
+# To learn more about the actions used, please refer to the GitHub marketplace:             #
+# - https://github.com/marketplace                                                          #
+#############################################################################################
+
 name: Build - Continuous Integration
 
+# The 'on' code block below demonstrates that if branch protections are enabled, that 
+# continuous integration (CI), or build, workflows will execute anytime changes are pushed
+# to a branch that is not main/master, and when a PR to main/master is created
 on:
   pull_request:
     branches:
@@ -7,6 +20,7 @@ on:
   push:
     branches:
       - '!master'
+      - '**'
 
 jobs:
   build:

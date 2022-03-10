@@ -1,3 +1,13 @@
+#############################################################################################
+# These workflows are for demonstrations purposes only and should not be used in production #
+#############################################################################################
+# To learn more about GitHub Actions, please see the official documentation:                #
+# - https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions    #
+#                                                                                           #
+# To learn more about the actions used, please refer to the GitHub marketplace:             #
+# - https://github.com/marketplace                                                          #
+#############################################################################################
+
 name: Deploy - Continous Delivery
 
 # The on code block below demonstrates that if branch protections are enabled, that 
@@ -13,15 +23,17 @@ on:
 # For more information on expressions and retrieving environment variables and secrets, see
 # https://docs.github.com/en/actions/learn-github-actions/expressions
 env:
-  AZURE_CONTAINER_REGISTRY: MY_REGISTRY_NAME # set this to the name of your container registry
-  PROJECT_NAME: MY_PROJECT_NAME              # set this to your project's name
-  RESOURCE_GROUP: MY_RESOURCE_GROUP          # set this to the resource group containing your AKS cluster
-  CLUSTER_NAME: MY_CLUSTER_NAME              # set this to the name of your AKS cluster
-  REGISTRY_URL: MY_REGISTRY_URL              # set this to the URL of your registry
-  MANIFEST_PATH: MY_HELM_FILE                   # set this to the path to your helm file
+  AZURE_CONTAINER_REGISTRY: orleansbasicsacr     # set this to the name of your container registry
+  PROJECT_NAME: orleansbasics                  # set this to your project's name
+  RESOURCE_GROUP: orleansbasics                  # set this to the resource group containing your AKS cluster
+  CLUSTER_NAME: orleansbasics                    # set this to the name of your AKS cluster
+  REGISTRY_URL: http://$acrServicePrincipalName
+  MANIFEST_PATH: _manifests/deployment.yaml      # set this to the path to your helm file
 
 jobs:
   build:
+    # Defines the runner we want to use for executing this workflow.
+    # More about choosing a runner: https://docs.github.com/en/actions/using-jobs/choosing-the-runner-for-a-job
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
@@ -29,9 +41,7 @@ jobs:
     - name: Azure Login
       uses: azure/login@v1
       with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Build image on ACR
       uses: azure/CLI@v1
@@ -43,30 +53,21 @@ jobs:
           
           az acr build -t ${{ env.REGISTRY_URL }}/${{ env.PROJECT_NAME }}:${{ github.sha }}
     
+    - name: Setup Kubectl
+      uses: azure/setup-kubectl@v2.0
+
     - name: Gets K8s context
-      uses: azure/aks-set-context@4e5aec273183a197b181314721843e047123d9fa
+      uses: azure/aks-set-context@v1
       with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           resource-group: ${{ env.RESOURCE_GROUP }}
           cluster-name: ${{ env.CLUSTER_NAME }}
-      id: login
 
-    # - name: Configure deployment
-    #   uses: azure/k8s-bake@773b6144a3732e3bf4c78b146a0bb9617b2e016b
-    #   with:
-    #     renderEngine: 'helm'
-    #     helmChart: ${{ env.CHART_PATH }}
-    #     overrideFiles: ${{ env.CHART_OVERRIDE_PATH }}
-    #     overrides: |     
-    #       replicas:2
-    #     helm-version: 'latest' 
-    #   id: bake
-
-    # - name: Deploys application
-    # - uses: Azure/k8s-deploy@c8fbd76ededaad2799c054a9fd5d0fa5d4e9aee4
-    #   with:
-    #     manifests: ${{ steps.bake.outputs.manifestsBundle }}
-    #     images: |
-    #       ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.PROJECT_NAME }}:${{ github.sha }}
-    #     imagepullsecrets: |
-    #       ${{ env.PROJECT_NAME }}
+    - name: Deploy our Orleans application!
+      uses: Azure/k8s-deploy@v1.4
+      with:
+        manifests: ${{ steps.bake.outputs.manifestsBundle }}
+        images: |
+          ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.PROJECT_NAME }}:${{ github.sha }}
+        imagepullsecrets: |
+          ${{ env.AZURE_CONTAINER_REGISTRY }}

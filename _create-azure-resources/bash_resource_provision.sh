@@ -1,7 +1,10 @@
+#!/bin/bash
+
 # Instructions
 # The azure command line tool, az cli does not have great blocking for processes
 # In order to make sure things happen in the correct order, we recommend executing 
-# each command separately.
+# each command separately in your IDE. In VS Code, you can highlight code and use 
+# F8 to execute the highlighted code 
 
 # Set your resource name variables here. The following are for example purposes
 resourceGroup="orleansbasics"
@@ -10,6 +13,7 @@ storageAccount="orleansbasics1"
 clusterName="orleansbasics"
 containerRegistry="orleansbasicsacr"
 
+# Opens a browser tab to log in to Azure
 az login
 
 # Create a resource group
@@ -19,7 +23,7 @@ az group create --name $resourceGroup --location $location
 az storage account create --location $location --name $storageAccount --resource-group $resourceGroup --kind "StorageV2" --sku "Standard_LRS"
 
 # Create an AKS cluster. This can take a few minutes
-az aks create --resource-group $resourceGroup --name $clusterName --node-count 3
+az aks create --resource-group $resourceGroup --name $clusterName
 
 # If you haven't already, install the Kubernetes CLI
 az aks install-cli
