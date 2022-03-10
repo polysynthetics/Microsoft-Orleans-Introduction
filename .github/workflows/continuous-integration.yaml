@@ -10,6 +10,9 @@
 
 name: Build - Continuous Integration
 
+# The 'on' code block below demonstrates that if branch protections are enabled, that 
+# continuous integration (CI), or build, workflows will execute anytime changes are pushed
+# to a branch that is not main/master, and when a PR to main/master is created
 on:
   pull_request:
     branches:
@@ -17,6 +20,7 @@ on:
   push:
     branches:
       - '!master'
+      - '**'
 
 jobs:
   build:
