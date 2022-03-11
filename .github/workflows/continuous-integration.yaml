@@ -40,7 +40,7 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     
-    # Since this is the continuos integration (CI) step, we only need to build our application. We will 
+    # Since this is the continuous integration (CI) step, we only need to build our application. We will 
     # execute a similar step on the release pipeline, but instead of build, we will use publish
     - name: Build
       run: dotnet build --configuration Release --no-restore
