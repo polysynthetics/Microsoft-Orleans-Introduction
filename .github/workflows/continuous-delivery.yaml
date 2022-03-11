@@ -54,7 +54,7 @@ jobs:
         azcliversion: 2.30.0
         inlineScript: |
           az configure --defaults acr=${{ env.AZURE_CONTAINER_REGISTRY }}
-          az acr build -t ${{ env.REGISTRY_URL }}/${{ env.PROJECT_NAME }}:${{ github.sha }}
+          az acr build -t ${{ env.REGISTRY_URL }}/${{ env.PROJECT_NAME }}:${{ github.sha }} .
     
     # Makes sure we have kubectl (kubernetes cli tool) installed on the runner. It should be here, but
     # better safe than sorry...
