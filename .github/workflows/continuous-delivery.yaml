@@ -10,7 +10,7 @@
 
 name: Deploy - Continous Delivery
 
-# The on code block below demonstrates that if branch protections are enabled, that 
+# The 'on' code block below demonstrates that if branch protections are enabled, that 
 # the only time a continuous delivery (CD) workflow will execute is when a pull request
 # is merged into the main branch
 on: 
@@ -36,26 +36,32 @@ jobs:
     # More about choosing a runner: https://docs.github.com/en/actions/using-jobs/choosing-the-runner-for-a-job
     runs-on: ubuntu-latest
     steps:
+    # Checkouts the associated repository for this workflow
     - uses: actions/checkout@master
 
+    # Login to Azure using the official action
     - name: Azure Login
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+    # Sets default azure container registry using the AZURE_CONTAINER_REGISTRY environment variable
+    # then builds the container image on the ACR. We could also build the image using docker tasks,
+    # or a docker cli script
     - name: Build image on ACR
       uses: azure/CLI@v1
       with:
         azcliversion: 2.30.0
         inlineScript: |
-          # Sets default azure container registry using environment variable above
           az configure --defaults acr=${{ env.AZURE_CONTAINER_REGISTRY }}
-          
           az acr build -t ${{ env.REGISTRY_URL }}/${{ env.PROJECT_NAME }}:${{ github.sha }}
     
+    # Makes sure we have kubectl (kubernetes cli tool) installed on the runner. It should be here, but
+    # better safe than sorry...
     - name: Setup Kubectl
       uses: azure/setup-kubectl@v2.0
 
+    # Pulls the kubeconfig file and sets it as the default context for executing kubectl commands against
     - name: Gets K8s context
       uses: azure/aks-set-context@v1
       with:
@@ -63,11 +69,9 @@ jobs:
           resource-group: ${{ env.RESOURCE_GROUP }}
           cluster-name: ${{ env.CLUSTER_NAME }}
 
+    # Deploy our application using the manifest file found at the path defined in the MANIFEST_PATH 
+    # environment variable
     - name: Deploy our Orleans application!
       uses: Azure/k8s-deploy@v1.4
       with:
-        manifests: ${{ steps.bake.outputs.manifestsBundle }}
-        images: |
-          ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.PROJECT_NAME }}:${{ github.sha }}
-        imagepullsecrets: |
-          ${{ env.AZURE_CONTAINER_REGISTRY }}
+        manifests: ${{ env.MANIFEST_PATH }}
