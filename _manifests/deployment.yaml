@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: main
-          image: orleansbasicsacr.azurecr.io/orleansbasics:latest
+          image: orleansbasicsacr.azurecr.io/orleansbasics
           imagePullPolicy: Always
           ports:
 
