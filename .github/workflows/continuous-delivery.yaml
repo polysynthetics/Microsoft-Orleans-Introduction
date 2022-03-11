@@ -23,15 +23,21 @@ on:
 # For more information on expressions and retrieving environment variables and secrets, see
 # https://docs.github.com/en/actions/learn-github-actions/expressions
 env:
-  AZURE_CONTAINER_REGISTRY: orleansbasicsacr     # set this to the name of your container registry
-  PROJECT_NAME: orleansbasics                  # set this to your project's name
-  RESOURCE_GROUP: orleansbasics                  # set this to the resource group containing your AKS cluster
-  CLUSTER_NAME: orleansbasics                    # set this to the name of your AKS cluster
-  REGISTRY_URL: http://$acrServicePrincipalName
-  MANIFEST_PATH: _manifests/deployment.yaml      # set this to the path to your helm file
+  # set this to the name of your container registry
+  AZURE_CONTAINER_REGISTRY: orleansbasicsacr
+  # set this to your project's name
+  PROJECT_NAME: orleansbasics
+  # set this to the resource group containing your AKS cluster
+  RESOURCE_GROUP: orleansbasics
+  # set this to the name of your AKS cluster
+  CLUSTER_NAME: orleansbasics
+  # set this to the name pf your container registry url
+  REGISTRY_URL: http://orleansbasicsacr.azurecr.io
+  # set this to the path to your helm file
+  MANIFEST_PATH: _manifests/deployment.yaml
 
 jobs:
-  build:
+  docker-build-and-deploy:
     # Defines the runner we want to use for executing this workflow.
     # More about choosing a runner: https://docs.github.com/en/actions/using-jobs/choosing-the-runner-for-a-job
     runs-on: ubuntu-latest
