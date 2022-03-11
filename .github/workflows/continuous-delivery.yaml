@@ -32,7 +32,7 @@ env:
   # set this to the name of your AKS cluster
   CLUSTER_NAME: orleansbasics
   # set this to the name pf your container registry url
-  REGISTRY_URL: http://orleansbasicsacr.azurecr.io
+  REGISTRY_URL: orleansbasicsacr.azurecr.io
   # set this to the path to your helm file
   MANIFEST_PATH: _manifests/deployment.yaml
 
