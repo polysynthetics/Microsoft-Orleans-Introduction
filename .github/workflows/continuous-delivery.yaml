@@ -24,7 +24,7 @@ on:
 # https://docs.github.com/en/actions/learn-github-actions/expressions
 env:
   # set this to the name of your container registry
-  AZURE_CONTAINER_REGISTRY: orleansbasicsacr
+  AZURE_CONTAINER_REGISTRY: orleansbasicsacr1
   # set this to your project's name
   PROJECT_NAME: orleansbasics
   # set this to the resource group containing your AKS cluster
@@ -32,7 +32,7 @@ env:
   # set this to the name of your AKS cluster
   CLUSTER_NAME: orleansbasics
   # set this to the name pf your container registry url
-  REGISTRY_URL: orleansbasicsacr.azurecr.io
+  REGISTRY_URL: orleansbasicsacr1.azurecr.io
   # set this to the path to your helm file
   MANIFEST_PATH: _manifests/deployment.yaml
 
