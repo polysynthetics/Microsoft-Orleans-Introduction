@@ -59,7 +59,7 @@ spec:
     spec:
       containers:
         - name: main
-          image: orleansbasicsacr.azurecr.io/orleansbasics
+          image: orleansbasicsacr1.azurecr.io/orleansbasics
           imagePullPolicy: Always
           ports:
 
