@@ -1,3 +1,38 @@
+# In order to be able to access the service from outside the cluster, we will need to add a Service object of type LoadBalancer
+apiVersion: v1
+kind: Service
+metadata:
+  name: orleansbasics
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: orleansbasics
+---
+# For RBAC-enabled clusters, the Kubernetes service account for the pods may also need to be granted the required access:
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pod-reader
+rules:
+- apiGroups: [ "" ]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pod-reader-binding
+subjects:
+- kind: ServiceAccount
+  name: default
+  apiGroup: ''
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: ''
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -68,45 +103,8 @@ spec:
           - name: DOTNET_SHUTDOWNTIMEOUTSECONDS
             value: "120"
       terminationGracePeriodSeconds: 180
-      imagePullSecrets:
-        - name: orleansbasicsacr
   minReadySeconds: 60
   strategy:
     rollingUpdate:
       maxUnavailable: 0
       maxSurge: 1
----
-# In order to be able to access the service from outside the cluster, we will need to add a Service object
-apiVersion: v1
-kind: Service
-metadata:
-  name: orleansbasics
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 80
-  selector:
-    app: orleansbasics
-# For RBAC-enabled clusters, the Kubernetes service account for the pods may also need to be granted the required access:
----
-kind: Role
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: pod-reader
-rules:
-- apiGroups: [ "" ]
-  resources: ["pods"]
-  verbs: ["get", "watch", "list"]
----
-kind: RoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: pod-reader-binding
-subjects:
-- kind: ServiceAccount
-  name: default
-  apiGroup: ''
-roleRef:
-  kind: Role
-  name: pod-reader
-  apiGroup: ''
